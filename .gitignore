@@ -1,5 +1,5 @@
-auto-save-list
-bookmarks
+config
+data
 elpa
-recentf
-transient
+eln-cache
+init.el

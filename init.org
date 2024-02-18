@@ -1,0 +1,268 @@
+#+title: My Emacs Configuration
+#+property: header-args:emacs-lisp :tangle init.el
+#+auto_tangle: t
+
+* Welcome!
+
+Welcome to my Emacs configuration. This file is written in Org mode and then tangled into a Emacs Lisp file.
+
+Some useful links:
+- [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch]]
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
+
+* Package System
+
+Set up the built-in package manager and use-package.
+
+#+begin_src emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives
+	       '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+
+  (require 'use-package)
+  (setq use-package-always-ensure t)
+#+end_src
+
+* Keep .emacs.d clean
+
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :init
+    (setq no-littering-etc-directory
+	  (expand-file-name "config/" user-emacs-directory)
+	  no-littering-var-directory
+	  (expand-file-name "data/" user-emacs-directory)))
+#+end_src
+
+* Auto-tangle
+
+Add ~auto_tangle: t~ to org files that need to be auto-tangled on
+save.
+
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :defer
+    t
+    :hook
+    (org-mode . org-auto-tangle-mode))
+#+end_src
+
+* User Interface
+
+** Basics
+
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (unless (eq system-type 'darwin)
+    (menu-bar-mode -1))
+  (fringe-mode 10)
+  (blink-cursor-mode -1)
+
+  (setq ring-bell-function 'ignore)
+
+  (setq scroll-margin 4
+	scroll-conservatively 100000
+	scroll-preserve-screen-position t)
+
+  (column-number-mode)
+#+end_src
+
+** Font
+
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil
+		      :family "JetBrains Mono"
+		      :height 120)
+  (set-face-attribute 'fixed-pitch nil
+		      :family "JetBrains Mono"
+		      :height 120)
+  (set-face-attribute 'variable-pitch nil
+		      :family "Cantarell"
+		      :height 120)
+#+end_src
+
+** Theme
+
+#+begin_src emacs-lisp
+  (use-package modus-themes
+    :config
+    ;; Add all your customizations prior to loading the themes
+    (setq modus-themes-italic-constructs t
+	  modus-themes-bold-constructs t)
+
+    ;; Maybe define some palette overrides, such as by using our presets
+    (setq modus-themes-common-palette-overrides
+	  modus-themes-preset-overrides-intense)
+
+    (setq modus-themes-to-toggle
+	  '(modus-operandi-tinted modus-vivendi-tinted))
+    (define-key global-map (kbd "<f5>") #'modus-themes-toggle)
+
+    ;; Load the theme of your choice.
+    (load-theme 'modus-operandi-tinted :no-confirm))
+#+end_src
+
+** Mode Line
+
+Run =M-x nerd-icons-install-fonts= to install the necessary fonts for
+displaying icons in the mode-line.
+
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :init
+    (doom-modeline-mode)
+    :custom
+    ((doom-modeline-height 60)))
+#+end_src
+
+** Programming
+
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'tex-mode-hook  'display-line-numbers-mode)
+
+  (add-hook 'prog-mode-hook 'electric-pair-mode)
+
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+* Convenience
+
+** Files
+
+#+begin_src emacs-lisp
+  (setq make-backup-files nil)
+#+end_src
+
+** Ivy
+
+#+begin_src emacs-lisp
+  ;; M-o really helpful
+  (use-package ivy
+    :init
+    (ivy-mode)
+    :config
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    :bind
+    (("C-s" . swiper)))
+
+  (use-package counsel
+    :init
+    (counsel-mode))
+
+  (use-package ivy-rich
+    :init
+    (ivy-rich-mode)
+    :config
+    (setcdr (assq t ivy-format-functions-alist)
+	    #'ivy-format-function-line))
+#+end_src
+
+** which-key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+  :init
+  (which-key-mode)
+  :custom
+  (which-key-idle-delay 0.3))
+#+end_src
+
+** helpful
+
+#+begin_src emacs-lisp
+  (use-package helpful)
+#+end_src
+
+* Key Bindings
+
+** macOS-specific Key Bindings
+
+#+begin_src emacs-lisp
+  (when (eq system-type 'darwin)
+    (setq mac-option-modifier 'meta)
+    (setq mac-command-modifier 'hyper)
+
+    (global-set-key [(hyper a)] 'mark-whole-buffer)
+    (global-set-key [(hyper v)] 'yank)
+    (global-set-key [(hyper c)] 'kill-ring-save)
+    (global-set-key [(hyper s)] 'save-buffer)
+    (global-set-key [(hyper l)] 'goto-line)
+    (global-set-key [(hyper w)]
+		    (lambda () (interactive) (delete-window)))
+    (global-set-key [(hyper z)] 'undo))
+#+end_src
+
+* Org Mode
+
+** Center Text
+
+#+begin_src emacs-lisp
+  (defun gan/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+	  visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook (org-mode . gan/org-mode-visual-fill))
+#+end_src
+
+** Styling
+
+Try [[https://github.com/sabof/org-bullets][org-bullets]] or [[https://github.com/integral-dw/org-superstar-mode][org-superstart-mode]] later.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :hook
+    (org-mode . variable-pitch-mode)
+    :config
+    (setq org-ellipsis " ▾")
+    (setq org-hide-emphasis-markers t)
+
+    (set-face-attribute 'org-level-1 nil :weight 'bold :height 1.2)
+    (set-face-attribute 'org-level-2 nil :weight 'medium :height 1.1)
+    (set-face-attribute 'org-level-3 nil :weight 'regular :height 1.05)
+    (set-face-attribute 'org-level-4 nil :weight 'regular :height 1.00)
+
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+    (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
+#+end_src
+
+* Git
+
+#+begin_src emacs-lisp
+  (use-package magit)
+
+  (use-package diff-hl
+    :init (global-diff-hl-mode))
+#+end_src
+
+* Haskell
+
+#+begin_src emacs-lisp
+  (use-package haskell-mode)
+#+end_src
+
+* Agda
+
+#+begin_src emacs-lisp
+  (when (executable-find "agda-mode")
+    (load-file (let ((coding-system-for-read 'utf-8))
+		 (shell-command-to-string "agda-mode locate"))))
+#+end_src
