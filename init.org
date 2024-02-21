@@ -176,8 +176,17 @@ displaying icons in the mode-line.
 
 ** helpful
 
+Replace built-in help commands with helpful's equivalents and introduce some new ones.
+
 #+begin_src emacs-lisp
-  (use-package helpful)
+  (use-package helpful
+    :bind
+    (("C-h f" . #'helpful-callable)
+     ("C-h v" . #'helpful-variable)
+     ("C-h k" . #'helpful-key)
+     ("C-h x" . #'helpful-command)
+     ("C-h F" . #'helpful-function)
+     ("C-h C-d" . #'helpful-at-point)))
 #+end_src
 
 * Key Bindings
