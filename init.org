@@ -265,7 +265,12 @@ Try [[https://github.com/sabof/org-bullets][org-bullets]] or [[https://github.co
 * Haskell
 
 #+begin_src emacs-lisp
-  (use-package haskell-mode)
+  (use-package haskell-mode
+    :hook
+    (haskell-mode-hook . interactive-haskell-mode)
+    :bind
+    (:map haskell-mode-map
+     ("C-`" . haskell-interactive-bring)))
 #+end_src
 
 * Agda
