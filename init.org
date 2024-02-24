@@ -4,11 +4,13 @@
 
 * Welcome!
 
-Welcome to my Emacs configuration. This file is written in Org mode and then tangled into a Emacs Lisp file.
+Welcome to my Emacs configuration. This file is written in Org mode
+and then tangled into a Emacs Lisp file.
 
 Some useful links:
 - [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch]]
 - [[https://www.masteringemacs.org/][Mastering Emacs]]
+  [[https://protesilaos.com/emacs/dotemacs][Prot's Emacs Configuration]]
 
 * Package System
 
@@ -37,8 +39,7 @@ Set up the built-in package manager and use-package.
 
 * Auto-tangle
 
-Add ~auto_tangle: t~ to org files that need to be auto-tangled on
-save.
+Add ~auto_tangle: t~ to org files that need to be auto-tangled on save.
 
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
