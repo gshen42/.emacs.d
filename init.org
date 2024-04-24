@@ -171,6 +171,16 @@ displaying icons in the mode-line.
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
+** More visible current line
+
+#+begin_src emacs-lisp
+  (global-hl-line-mode 1)
+
+  (use-package beacon
+    :config
+    (beacon-mode 1))
+#+end_src
+
 * Completion
 
 ** Vertico
