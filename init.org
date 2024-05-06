@@ -350,6 +350,14 @@ Try [[https://github.com/sabof/org-bullets][org-bullets]] or [[https://github.co
 
 * Programming
 
+** Flycheck
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :init
+    (global-flycheck-mode))
+#+end_src
+
 ** Haskell
 
 #+begin_src emacs-lisp
